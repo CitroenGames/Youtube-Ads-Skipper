@@ -17,6 +17,11 @@ const observer = new MutationObserver((mutationsList, observer) => {
       if (skipAdButton) {
         skipAdButton.click();
       }
+
+      const legacyAdRenderer = document.querySelector('ytd-player-legacy-desktop-watch-ads-renderer');
+      if (legacyAdRenderer) {
+        legacyAdRenderer.remove();
+      }
     }
   }
 });
