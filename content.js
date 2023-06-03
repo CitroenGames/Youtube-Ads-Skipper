@@ -1,39 +1,39 @@
 function getVisibleElement(selector) {
-        const elements = document.querySelectorAll(selector);
-        return [...elements].find(element => element.offsetWidth && element.offsetHeight);
+    const elements = document.querySelectorAll(selector);
+    return [...elements].find(element => element.offsetWidth && element.offsetHeight);
+}
+
+const options = { childList: true, subtree: true };
+
+let VIDEO;
+
+function getAd() {
+    return getVisibleElement(".ytp-ad-player-overlay-flyout-cta.ytp-ad-player-overlay-flyout-cta-rounded");
+}
+
+function skipAd() {
+    if (!getAd()) {
+        return;
     }
 
-    const options = { childList: true, subtree: true };
+    VIDEO.currentTime = VIDEO.duration;
+}
 
-    let VIDEO;
-
-    function getAd() {
-        return getVisibleElement(".ytp-ad-player-overlay-flyout-cta.ytp-ad-player-overlay-flyout-cta-rounded");
-    }
-
-    function skipAd() {
-        if (!getAd()) {
+function prepareToSkipAd() {
+    new MutationObserver((_, observer) => {
+        const elVideo = getVisibleElement("video");
+        if (!elVideo) {
             return;
         }
 
-        VIDEO.currentTime = VIDEO.duration;
-    }
+        observer.disconnect();
 
-    function prepareToSkipAd() {
-        new MutationObserver((_, observer) => {
-            const elVideo = getVisibleElement("video");
-            if (!elVideo) {
-                return;
-            }
+        VIDEO = elVideo;
+        VIDEO.removeEventListener("canplay", skipAd);
+        VIDEO.addEventListener("canplay", skipAd);
+    }).observe(document, options);
+}
 
-            observer.disconnect();
+new MutationObserver(prepareToSkipAd).observe(document.querySelector("title"), options);
 
-            VIDEO = elVideo;
-            VIDEO.removeEventListener("canplay", skipAd);
-            VIDEO.addEventListener("canplay", skipAd);
-        }).observe(document, options);
-    }
-
-    new MutationObserver(prepareToSkipAd).observe(document.querySelector("title"), options);
-
-    prepareToSkipAd();
+prepareToSkipAd();
