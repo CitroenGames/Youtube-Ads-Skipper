@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 const observer = new MutationObserver((mutationsList, observer) => {
   for(let mutation of mutationsList) {
@@ -25,10 +26,14 @@ function getVisibleElement(selector) {
 
     let VIDEO;
 =======
+=======
+function getVisibleElement(selector) {
+>>>>>>> main
     const elements = document.querySelectorAll(selector);
     return [...elements].find(element => element.offsetWidth && element.offsetHeight);
 }
 
+<<<<<<< HEAD
 function getAd() {
     return getVisibleElement(".ytp-ad-player-overlay-flyout-cta.ytp-ad-player-overlay-flyout-cta-rounded");
 }
@@ -44,13 +49,39 @@ function getAd() {
 >>>>>>> Stashed changes
         }
       }
+=======
+const options = { childList: true, subtree: true };
 
-      const skipAdButton = document.querySelector('.ytp-ad-skip-button.ytp-button');
-      if (skipAdButton) {
-        skipAdButton.click();
-      }
+let VIDEO;
+>>>>>>> main
+
+function getAd() {
+    return getVisibleElement(".ytp-ad-player-overlay-flyout-cta.ytp-ad-player-overlay-flyout-cta-rounded");
+}
+
+function skipAd() {
+    if (!getAd()) {
+        return;
     }
-  }
-});
 
-observer.observe(document, { attributes: false, childList: true, subtree: true });
+    VIDEO.currentTime = VIDEO.duration;
+}
+
+function prepareToSkipAd() {
+    new MutationObserver((_, observer) => {
+        const elVideo = getVisibleElement("video");
+        if (!elVideo) {
+            return;
+        }
+
+        observer.disconnect();
+
+        VIDEO = elVideo;
+        VIDEO.removeEventListener("canplay", skipAd);
+        VIDEO.addEventListener("canplay", skipAd);
+    }).observe(document, options);
+}
+
+new MutationObserver(prepareToSkipAd).observe(document.querySelector("title"), options);
+
+prepareToSkipAd();
