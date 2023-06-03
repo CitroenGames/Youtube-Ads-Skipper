@@ -12,6 +12,11 @@ const observer = new MutationObserver((mutationsList, observer) => {
           }
         }
       }
+
+      const skipAdButton = document.querySelector('.ytp-ad-skip-button.ytp-button');
+      if (skipAdButton) {
+        skipAdButton.click();
+      }
     }
   }
 });
